@@ -1,34 +1,51 @@
 <?php
 $login = false;
 $showError = false;
+$username = $password = '';
+$errors = array('username' => '','password' => '');
+
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     include './config/db_connect.php';
-    $username = $_POST["username"];
-    $password = $_POST["password"]; 
-    
-     
-    // $sql = "Select * from users where username='$username' AND password='$password'";
-    $sql = "Select * from users where username='$username'";
-    $result = mysqli_query($conn, $sql);
-    $num = mysqli_num_rows($result);
-    if ($num == 1){
-        while($row=mysqli_fetch_assoc($result)){
-            if (password_verify($password, $row['password'])){ 
-                $login = true;
-                session_start();
-                $_SESSION['loggedin'] = true;
-                $_SESSION['username'] = $username;
-                header("location: index.php");
-            } 
-            else{
-                $showError = "Invalid Credentials";
-            }
-        }
-        
-    } 
-    else{
-        $showError = "Invalid Credentials";
+    if(empty($_POST['username'])){
+      $errors['username'] = 'A username is required';
     }
+  
+    if(empty($_POST['password'])){
+      $errors['password'] = 'A password is required';
+    }
+
+    if(array_filter($errors)){
+      // echo 'errors in form';
+    } else {
+      $username = $_POST["username"];
+      $password = $_POST["password"]; 
+      
+      
+      // $sql = "Select * from users where username='$username' AND password='$password'";
+      $sql = "Select * from users where username='$username'";
+      $result = mysqli_query($conn, $sql);
+      $num = mysqli_num_rows($result);
+      if ($num == 1){
+          while($row=mysqli_fetch_assoc($result)){
+              if (password_verify($password, $row['password'])){ 
+                  $login = true;
+                  session_start();
+                  $_SESSION['loggedin'] = true;
+                  $_SESSION['username'] = $username;
+                  header("location: index.php");
+              } 
+              else{
+                  $showError = "Invalid Credentials";
+              }
+          }
+          
+      } 
+      else{
+          $showError = "Invalid Credentials";
+      }
+
+  }
 }
     
 ?>
@@ -71,11 +88,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">
-            
+            <div class="text-danger d-inline"><?php echo $errors['username']; ?></div>
         </div>
         <div class="form-group mt-3">
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password">
+            <div class="text-danger d-inline"><?php echo $errors['password']; ?></div>
         </div>
         <button type="submit" class="btn btn-color px-4 my-3">Login</button>
      </form>

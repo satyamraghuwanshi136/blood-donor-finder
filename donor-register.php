@@ -125,7 +125,7 @@ if(isset($_POST['submit'])){
         <div class="col-lg-12 pt-5">
           <h1 class="text-center fw-bold">Blood Donor Registration</h1>
           <div class="row pt-4">
-            <form action="" method="POST">
+            <form action="donor-register.php" method="POST" >
               <div class="row  d-flex align-items-center justify-content-center">
                   <div class="col-md-6">
                           <div class="form-group">

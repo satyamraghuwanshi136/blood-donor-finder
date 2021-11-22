@@ -76,7 +76,7 @@ if(isset($_POST['submit'])){
       <div class="p-5 h-100 main-right">
         <div class="find-donor-section p-5 text-center">
           <h1 class="mb-3">SEARCH A DONOR</h1>
-          <form class="d-flex align-items-center justify-content-center" action="" method="POST">
+          <form class="d-flex align-items-center justify-content-center" action="search-donor.php" method="POST">
             <div class="row">
               <div class="col-lg-2 col-md-12 mx-2 my-2 search-select">
           <select class="form-select" id="countrySelect" size="1" name="state" onchange="makeSubmenu(this.value)" >

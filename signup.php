@@ -1,34 +1,58 @@
 <?php
 $showAlert = false;
 $showError = false;
+
+$username = $password = $cpassword = '';
+
+$errors = array('username' => '','password' => '','cpassword' => '');
+
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     include './config/db_connect.php';
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    $cpassword = $_POST["cpassword"];
 
-    // Check whether this username exists
-    $existSql = "SELECT * FROM `users` WHERE username = '$username'";
-    $result = mysqli_query($conn, $existSql);
-    $numExistRows = mysqli_num_rows($result);
-    if($numExistRows > 0){
-        // $exists = true;
-        $showError = "Username Already Exists";
+    if(empty($_POST['username'])){
+      $errors['username'] = 'A username is required';
     }
-    else{
-        // $exists = false; 
-        if(($password == $cpassword)){
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO `users` ( `username`, `password`) VALUES ('$username', '$hash')";
-            $result = mysqli_query($conn, $sql);
-            if ($result){
-                $showAlert = true;
-            }
+  
+    if(empty($_POST['password'])){
+      $errors['password'] = 'A password is required';
+    }
+  
+    if(empty($_POST['cpassword'])){
+      $errors['cpassword'] = 'A cpassword is required';
+    }
+  
+    if(array_filter($errors)){
+      // echo 'errors in form';
+    } else {
+        $username = $_POST["username"];
+        $password = $_POST["password"];
+        $cpassword = $_POST["cpassword"];
+
+         // Check whether this username exists
+        $existSql = "SELECT * FROM `users` WHERE username = '$username'";
+        $result = mysqli_query($conn, $existSql);
+        $numExistRows = mysqli_num_rows($result);
+        if($numExistRows > 0){
+            // $exists = true;
+            $showError = "Username Already Exists";
         }
         else{
-            $showError = "Passwords do not match";
+            // $exists = false; 
+            if(($password == $cpassword)){
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $sql = "INSERT INTO `users` ( `username`, `password`) VALUES ('$username', '$hash')";
+                $result = mysqli_query($conn, $sql);
+                if ($result){
+                    $showAlert = true;
+                }
+            }
+            else{
+                $showError = "Passwords do not match";
+            }
         }
     }
+   
 }
     
 ?>
@@ -70,15 +94,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" maxlength="11" class="form-control" id="username" name="username" aria-describedby="emailHelp">
-            
+            <div class="text-danger d-inline"><?php echo $errors['username']; ?></div>
         </div>
         <div class="form-group my-3">
             <label for="password">Password</label>
             <input type="password" maxlength="23" class="form-control" id="password" name="password">
+            <div class="text-danger d-inline"><?php echo $errors['password']; ?></div>
         </div>
         <div class="form-group my-3">
             <label for="cpassword">Confirm Password</label>
             <input type="password" class="form-control" id="cpassword" name="cpassword">
+            <div class="text-danger d-inline"><?php echo $errors['cpassword']; ?></div><br>
             <small id="emailHelp" class="form-text text-muted">Make sure to type the same password</small>
         </div>
          
